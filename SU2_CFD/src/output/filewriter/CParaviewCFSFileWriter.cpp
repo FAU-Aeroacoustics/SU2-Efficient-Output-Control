@@ -159,9 +159,6 @@ void CParaviewCFSFileWriter::Write_Data(string val_filename) {
     }
   }
 
-  string MeshPathName = "/Mesh/Nodes/";
-  //  string fullMeshPathName = MeshPathName + timestep + "/Coordinates";
-
   /*--- store the connectivity in a vector ---*/
   vector<vector<int> > connectivity(myElem, vector<int>(N_POINTS_HEXAHEDRON, 0));
 
