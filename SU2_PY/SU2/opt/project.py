@@ -88,6 +88,7 @@ class Project(object):
             grad(func_name,method,config) - gradient of specified name,
                                             where method is 'CONTINUOUS_ADJOINT' or 'FINDIFF'
             setup config for given dvs with 
+UTPUT
             config = project.unpack_dvs(dvs)
     """  
     
@@ -95,9 +96,9 @@ class Project(object):
     _design_number = '%03d'
     
     
-    def __init__( self, config, state=None , 
+    def __init__( self, config, minimal, state=None , 
                   designs=None, folder='.' ,
-                  warn = True                ):
+                  warn = True    ):
         
         folder = folder.rstrip('/')+'/'
         if '*' in folder: folder = su2io.next_folder(folder)        
@@ -147,7 +148,7 @@ class Project(object):
         self.designs = designs     # design list
         self.folder  = folder      # project folder
         self.results = su2util.ordered_bunch() # project design results
-
+        self.minimal = minimal
         # output filenames
         self.filename = 'project.pkl'
         self.results_filename = 'results.pkl'
@@ -365,11 +366,21 @@ class Project(object):
                     ztate.FILES[key] = name
             
         # name new folder
-        folder = self._design_folder.replace('*',self._design_number)
-        folder = folder % (len(self.designs) + 1)
+       	folder = self._design_folder.replace('*',self._design_number)
+        Prev_folder = folder % (len(self.designs) -1)
+        folder = folder % (len(self.designs) + 1)	
 
-        # start new design (pulls files to folder)
+        
         design = su2eval.Design(konfig,ztate,folder)
+        # start new design (pulls files to folder)
+        if (self.minimal) :
+          fileList = glob.glob(Prev_folder+'/*/*')
+          parentList=  glob.glob(Prev_folder+'/*')
+          extension=('.h5') # ('edf','json','Dat','Plb','docx','txt')
+          path_remove=[filename for filename in fileList if not filename.endswith ( extension )]
+          parentPath_remove=[filename for filename in parentList if not filename.endswith ( extension )]
+          [os.remove ( f ) for f in path_remove if os.path.isfile(f)]       
+          [os.remove ( f ) for f in parentPath_remove if os.path.isfile(f)]      
         
         # update local state filenames ( ??? why not in Design() )
         for key in design.files:
