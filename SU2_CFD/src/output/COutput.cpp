@@ -37,6 +37,7 @@
 #include "../../include/output/filewriter/CParaviewFileWriter.hpp"
 #include "../../include/output/filewriter/CSTLFileWriter.hpp"
 #include "../../include/output/filewriter/CParaviewBinaryFileWriter.hpp"
+#include "../../include/output/filewriter/CParaviewCFSFileWriter.hpp"
 #include "../../include/output/filewriter/CParaviewXMLFileWriter.hpp"
 #include "../../include/output/filewriter/CParaviewVTMFileWriter.hpp"
 #include "../../include/output/filewriter/CTecplotFileWriter.hpp"
@@ -546,6 +547,34 @@ void COutput::WriteToFile(CConfig *config, CGeometry *geometry, OUTPUT_TYPE form
 
       break;
 
+
+      case OUTPUT_TYPE::PARAVIEW_CFS_H5:
+
+      extension = CParaviewCFSFileWriter::fileExt;
+
+      if (fileName.empty())
+        fileName = config->GetFilename(volumeFilename, "", curTimeIter);
+
+      if (!config->GetWrt_Volume_Overwrite())
+        filename_iter = config->GetFilename_Iter(fileName,curInnerIter, curOuterIter);
+
+      /*--- Load and sort the output data and connectivity. ---*/
+
+      volumeDataSorter->SortConnectivity(config, geometry, true);
+
+      /*--- Write paraview binary ---*/
+      if (rank == MASTER_NODE) {
+        (*fileWritingTable) << "Paraview" << fileName;
+
+        if (!config->GetWrt_Volume_Overwrite())
+          (*fileWritingTable) << "Paraview + iter" << filename_iter;
+      }
+	
+      fileWriter = new CParaviewCFSFileWriter(volumeDataSorter,config);
+
+      break;
+
+
     case OUTPUT_TYPE::PARAVIEW_LEGACY_BINARY:
 
       extension = CParaviewBinaryFileWriter::fileExt;
@@ -725,6 +754,35 @@ void COutput::WriteToFile(CConfig *config, CGeometry *geometry, OUTPUT_TYPE form
       fileWriter = new CParaviewXMLFileWriter(surfaceDataSorter);
 
       break;
+
+    case OUTPUT_TYPE::SURFACE_PARAVIEW_CFS_H5:
+
+      extension = CParaviewCFSFileWriter::fileExt;
+
+      if (fileName.empty())
+        fileName = config->GetFilename(surfaceFilename, "", curTimeIter);
+
+      if (!config->GetWrt_Surface_Overwrite())
+        filename_iter = config->GetFilename_Iter(fileName,curInnerIter, curOuterIter);
+
+
+      /*--- Load and sort the output data and connectivity. ---*/
+
+      surfaceDataSorter->SortConnectivity(config, geometry);
+      surfaceDataSorter->SortOutputData();
+
+      /*--- Write paraview binary ---*/
+      if (rank == MASTER_NODE) {
+        (*fileWritingTable) << "Paraview surface" << fileName;
+
+        if (!config->GetWrt_Surface_Overwrite())
+          (*fileWritingTable) << "Paraview surface + iter" << filename_iter;
+      }
+
+	fileWriter = new CParaviewCFSFileWriter(surfaceDataSorter,config);
+
+      break;
+
 
     case OUTPUT_TYPE::SURFACE_TECPLOT_ASCII:
 
