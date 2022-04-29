@@ -51,7 +51,9 @@ def main():
                       help="True/False Quiet all SU2 output (optimizer output only)", metavar="QUIET")
     parser.add_option("-z", "--zones", dest="nzones", default="1",
                       help="Number of Zones", metavar="ZONES")
-
+    parser.add_option("-m", "--minimal", dest="minimal", default="False",
+                      help="True/False To be used in combination with H5_CFS output files for unsteady optimizations to keep the number of output files to a minimum", metavar="MINIMAL")
+ 
 
     (options, args)=parser.parse_args()
     
@@ -60,7 +62,8 @@ def main():
     options.quiet       = options.quiet.upper() == 'TRUE'
     options.gradient    = options.gradient.upper()
     options.nzones      = int( options.nzones )
-    
+    options.minimal     = options.minimal.upper() == 'TRUE'
+
     sys.stdout.write('\n-------------------------------------------------------------------------\n')
     sys.stdout.write('|    ___ _   _ ___                                                      |\n')
     sys.stdout.write('|   / __| | | |_  )   Release 7.3.1 \"Blackbird\"                         |\n')
@@ -95,7 +98,8 @@ def main():
                         options.gradient    ,
                         options.optimization ,
                         options.quiet       ,
-                        options.nzones      )
+                        options.nzones      ,
+			                  options.minimal     )
     
 #: main()
 
@@ -105,14 +109,17 @@ def shape_optimization( filename                           ,
                         gradient    = 'CONTINUOUS_ADJOINT' ,
                         optimization = 'SLSQP'             ,
                         quiet       = False                ,
-                        nzones      = 1                    ):
+                        nzones      = 1                    ,
+                        minimal     = False                ):
+
     # Config
     config = SU2.io.Config(filename)
     config.NUMBER_PART = partitions
     config.NZONES      = int( nzones )
     if quiet: config.CONSOLE = 'CONCISE'
     config.GRADIENT_METHOD = gradient
-    
+    if minimal: assert 'PARAVIEW_CFS_H5' in config.OUTPUT_FILES, 'Minimal option should only be used with "PARAVIEW_CFS_H5" output type'
+
     its               = int ( config.OPT_ITERATIONS )                      # number of opt iterations
     bound_upper       = float ( config.OPT_BOUND_UPPER )                   # variable bound to be scaled by the line search
     bound_lower       = float ( config.OPT_BOUND_LOWER )                   # variable bound to be scaled by the line search
@@ -152,7 +159,7 @@ def shape_optimization( filename                           ,
         project = SU2.io.load_data(projectname)
         project.config = config
     else:
-        project = SU2.opt.Project(config,state)
+        project = SU2.opt.Project(config,minimal,state)
 
     # Optimize
     if optimization == 'SLSQP':
