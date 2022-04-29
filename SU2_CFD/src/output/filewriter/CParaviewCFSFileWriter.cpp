@@ -144,7 +144,7 @@ void CParaviewCFSFileWriter::Write_Data(string val_filename) {
   }
 
   vector<float> dataBufferFloat(myPoint * NCOORDS);
-  vector<vector<double> > twoDimBuffer(myPoint, vector<double>(NCOORDS, 0.0));
+  vector<vector<float> > twoDimBuffer(myPoint, vector<float>(NCOORDS, 0.0));
 
   for (iPoint = 0; iPoint < myPoint; iPoint++) {
     for (iDim = 0; iDim < NCOORDS; iDim++) {
@@ -247,7 +247,7 @@ void CParaviewCFSFileWriter::Write_Data(string val_filename) {
         std::vector<std::string> DOFNames = {""};
         std::vector<std::string> EntityName = {"default"};
         std::vector<std::string> unit = {"unknown"};
-        std::vector<double> stepValues(getLastTimeStep(), 0);
+        std::vector<float> stepValues(getLastTimeStep(), 0);
         std::vector<int> stepNumbers(getLastTimeStep(), 0);
         std::iota(std::begin(stepNumbers), std::end(stepNumbers), 0);  // Fill with 0, 1, ..., 99.
         int entryType = 1;
@@ -297,7 +297,7 @@ void CParaviewCFSFileWriter::Write_Data(string val_filename) {
           file.createDataSet<int>((fieldDescription + "/" + "NumDOFs"), HighFive::DataSpace(1)).write(entryType);
           file.createDataSet<int>((fieldDescription + "/" + "StepNumbers"), HighFive::DataSpace::From(stepNumbers))
               .write(stepNumbers);
-          file.createDataSet<double>((fieldDescription + "/" + "StepValues"), HighFive::DataSpace::From(stepValues))
+          file.createDataSet<float>((fieldDescription + "/" + "StepValues"), HighFive::DataSpace::From(stepValues))
               .write(stepValues);
           file.createDataSet<std::string>((fieldDescription + "/" + "Unit"), HighFive::DataSpace::From(unit))
               .write(unit);
@@ -371,7 +371,7 @@ void CParaviewCFSFileWriter::Write_Data(string val_filename) {
 
   HighFive::File file(H5_fileName, HighFive::File::ReadWrite | HighFive::File::OpenOrCreate,
                       HighFive::MPIOFileDriver(MPI_COMM_WORLD, MPI_INFO_NULL));
-  std::vector<std::vector<double> > vectorBuffer(myPoint, vector<double>(NCOORDS, 0.0));
+  std::vector<std::vector<float> > vectorBuffer(myPoint, vector<float>(NCOORDS, 0.0));
 
   VarCounter = varStart;
 
@@ -421,7 +421,7 @@ void CParaviewCFSFileWriter::Write_Data(string val_filename) {
       string fullPathName = pathName + timestep + "/" + thisFieldName + "/default/Nodes/Real";
 
       HighFive::DataSet dataset =
-          file.createDataSet<double>(fullPathName, HighFive::DataSpace(dataSorter->GetnPointsGlobal(), NCOORDS));
+          file.createDataSet<float>(fullPathName, HighFive::DataSpace(dataSorter->GetnPointsGlobal(), NCOORDS));
       dataset.select({dataSorter->GetnPointCumulative(rank), 0}, {myPoint, NCOORDS}).write(vectorBuffer);
 
       VarCounter++;
@@ -431,7 +431,7 @@ void CParaviewCFSFileWriter::Write_Data(string val_filename) {
       string pathName = "/Results/Mesh/MultiStep_1/";
       string fullPathName = pathName + timestep + "/" + dataSetName + "/default/Nodes/Real";
       HighFive::DataSet dataset =
-          file.createDataSet<double>(fullPathName, HighFive::DataSpace(dataSorter->GetnPointsGlobal()));
+          file.createDataSet<float>(fullPathName, HighFive::DataSpace(dataSorter->GetnPointsGlobal()));
 
       for (iPoint = 0; iPoint < myPoint; iPoint++) {
         float val = (float)dataSorter->GetData(VarCounter, iPoint);
