@@ -17,7 +17,7 @@ You can use meson for configuration (e.g. ./meson.py -Denable-autodiff=true -Den
 
 Usage
 ------------
-To use the OpenCFS H5 output format, set 'PARAVIEW_CFS_H5' as the output type in the config file e.g. OUTPUT_FILES=(RESTART,PARAVIEW_CFS_H5).
+To use the OpenCFS H5 output format, set `PARAVIEW_CFS_H5` as the output type in the config file e.g. OUTPUT_FILES=(RESTART,PARAVIEW_CFS_H5).
 To reduce the number of output files for unsteady optimizations, run the 'shape_optimization.py' script with the option "--minimal True". This option should be used only with 'PARAVIEW_CFS_H5' output type. It removes all unnecessary files preceding the two latest design steps except the H5 solutions.
 
 Precompiled Paraview binaries (V5.9) with the CFS reader plugin is placed inside 'Paraview_CFS'. To build the plugin for other versions of Paraview see: https://opencfs.gitlab.io/userdocu/Installation/ParaView/
