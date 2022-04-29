@@ -1,7 +1,7 @@
 /*!
- * \file CParaviewXMLFileWriter.cpp
+ * \file CParaviewCFSFileWriter.hpp
  * \brief Filewriter class for Paraview binary format.
- * \author T. Albring
+ * \author E. Bagheri
  * \version 7.3.1 "Blackbird"
  *
  * SU2 Project Website: https://su2code.github.io
