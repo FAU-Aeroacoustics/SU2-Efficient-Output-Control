@@ -160,7 +160,7 @@ void CParaviewCFSFileWriter::Write_Data(string val_filename) {
   }
 
   string MeshPathName = "/Mesh/Nodes/";
-  string fullMeshPathName = MeshPathName + timestep + "/Coordinates";
+  //  string fullMeshPathName = MeshPathName + timestep + "/Coordinates";
 
   /*--- store the connectivity in a vector ---*/
   vector<vector<int> > connectivity(myElem, vector<int>(N_POINTS_HEXAHEDRON, 0));
@@ -311,8 +311,8 @@ void CParaviewCFSFileWriter::Write_Data(string val_filename) {
 
     HighFive::File file(H5_fileName, HighFive::File::ReadWrite | HighFive::File::OpenOrCreate,
                         HighFive::MPIOFileDriver(MPI_COMM_WORLD, MPI_INFO_NULL));
-    HighFive::DataSet datasetMesh =
-        file.createDataSet<double>(fullMeshPathName, HighFive::DataSpace(dataSorter->GetnPointsGlobal(), 3));
+    // HighFive::DataSet datasetMesh =
+    //    file.createDataSet<double>(fullMeshPathName, HighFive::DataSpace(dataSorter->GetnPointsGlobal(), 3));
     datasetMesh.select({dataSorter->GetnPointCumulative(rank), 0}, {myPoint, 3}).write(twoDimBuffer);
 
     HighFive::DataSet dataSetRegionsNodesStatic =
@@ -345,17 +345,7 @@ void CParaviewCFSFileWriter::Write_Data(string val_filename) {
     copyToBuffer(PYRAMID, H5PYRAMID, nParallel_Pyra, N_POINTS_PYRAMID);
 
     string TopoPathName = "/Mesh/Elements/";
-    string fullTopoStorPathName = TopoPathName + "TopoStorage";
-    string fullTopoOffsetPathName = TopoPathName + "TopoOffset";
     string fullElementTypePathName = TopoPathName + "Types";
-
-    HighFive::DataSet datasetTopoStr =
-        file.createDataSet<int>(fullTopoStorPathName, HighFive::DataSpace(GlobalElemStorage));
-    datasetTopoStr.select({dataSorter->GetnElemConnCumulative(rank)}, {myElemStorage}).write(connBuf);
-
-    HighFive::DataSet datasetTopoOffSet =
-        file.createDataSet<int>(fullTopoOffsetPathName, HighFive::DataSpace(GlobalElem));
-    datasetTopoOffSet.select({dataSorter->GetnElemCumulative(rank)}, {myElem}).write(offsetBuf);
 
     HighFive::DataSet datasetElementType =
         file.createDataSet<int>(fullElementTypePathName, HighFive::DataSpace(GlobalElem));
