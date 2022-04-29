@@ -311,10 +311,6 @@ void CParaviewCFSFileWriter::Write_Data(string val_filename) {
 
     HighFive::File file(H5_fileName, HighFive::File::ReadWrite | HighFive::File::OpenOrCreate,
                         HighFive::MPIOFileDriver(MPI_COMM_WORLD, MPI_INFO_NULL));
-    // HighFive::DataSet datasetMesh =
-    //    file.createDataSet<double>(fullMeshPathName, HighFive::DataSpace(dataSorter->GetnPointsGlobal(), 3));
-    datasetMesh.select({dataSorter->GetnPointCumulative(rank), 0}, {myPoint, 3}).write(twoDimBuffer);
-
     HighFive::DataSet dataSetRegionsNodesStatic =
         file.createDataSet<float>("Mesh/Nodes/Coordinates", HighFive::DataSpace(GlobalPoint, 3));
     dataSetRegionsNodesStatic.select({dataSorter->GetnPointCumulative(rank), 0}, {myPoint, 3}).write(twoDimBuffer);
