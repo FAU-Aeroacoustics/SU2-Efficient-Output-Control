@@ -1653,6 +1653,8 @@ enum class OUTPUT_TYPE {
   SURFACE_CSV,             /*!< \brief Comma-separated values format for the solution output. */
   PARAVIEW_ASCII,          /*!< \brief Paraview ASCII format for the solution output. */
   PARAVIEW_LEGACY_BINARY,  /*!< \brief Paraview binary format for the solution output. */
+  PARAVIEW_CFS_H5,	       /*!< \brief Paraview H5 archive compatible with OpenCFS. */ 
+  SURFACE_PARAVIEW_CFS_H5, /*!< \brief Paraview H5 archive compatible with OpenCFS. */ 
   SURFACE_PARAVIEW_ASCII,  /*!< \brief Paraview ASCII format for the solution output. */
   SURFACE_PARAVIEW_LEGACY_BINARY, /*!< \brief Paraview binary format for the solution output. */
   MESH,                    /*!< \brief SU2 mesh format. */
@@ -1675,6 +1677,8 @@ static const MapType<std::string, OUTPUT_TYPE> Output_Map = {
   MakePair("SURFACE_CSV", OUTPUT_TYPE::SURFACE_CSV)
   MakePair("PARAVIEW_ASCII", OUTPUT_TYPE::PARAVIEW_ASCII)
   MakePair("PARAVIEW_LEGACY", OUTPUT_TYPE::PARAVIEW_LEGACY_BINARY)
+  MakePair("SURFACE_PARAVIEW_CFS_H5",OUTPUT_TYPE::SURFACE_PARAVIEW_CFS_H5)
+  MakePair("PARAVIEW_CFS_H5",OUTPUT_TYPE::PARAVIEW_CFS_H5)
   MakePair("SURFACE_PARAVIEW_ASCII", OUTPUT_TYPE::SURFACE_PARAVIEW_ASCII)
   MakePair("SURFACE_PARAVIEW_LEGACY", OUTPUT_TYPE::SURFACE_PARAVIEW_LEGACY_BINARY)
   MakePair("PARAVIEW", OUTPUT_TYPE::PARAVIEW_XML)
@@ -1701,6 +1705,7 @@ inline bool isParaview(OUTPUT_TYPE format) {
     case OUTPUT_TYPE::PARAVIEW_XML:
     case OUTPUT_TYPE::SURFACE_PARAVIEW_XML:
     case OUTPUT_TYPE::PARAVIEW_MULTIBLOCK:
+    case OUTPUT_TYPE::PARAVIEW_CFS_H5: 
       return true;
     default:
       return false;
