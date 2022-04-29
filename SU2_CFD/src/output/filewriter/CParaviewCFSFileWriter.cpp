@@ -27,7 +27,6 @@
 
 #include "../../../include/output/filewriter/CParaviewCFSFileWriter.hpp"
 #include "../../../../Common/include/toolboxes/printing_toolbox.hpp"
-
 #include "../../../include/output/highfive/H5Easy.hpp"
 #include "../../../include/output/highfive/H5File.hpp"
 
