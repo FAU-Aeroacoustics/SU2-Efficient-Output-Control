@@ -22,3 +22,9 @@ To reduce the number of output files for unsteady optimizations, run the `shape_
 
 Precompiled Paraview binaries (V5.9) with the CFS reader plugin is placed inside 'Paraview_CFS'. To build the plugin for other versions of Paraview see: https://opencfs.gitlab.io/userdocu/Installation/ParaView/
 
+
+Acknowledgment
+--------------
+We gratefully acknowledge the support from 'KONWIHR'.
+
+KONWIHR [https://www.konwihr.de/] (Competence Network for Scientific High Performance Computing in Bavaria).
